@@ -1,0 +1,6 @@
+faster-whisper>=1.0.0
+soundfile>=0.12.0
+torchaudio
+fastapi>=0.100.0
+uvicorn>=0.20.0
+python-multipart>=0.0.6

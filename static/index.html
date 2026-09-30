@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Audio Transcriber & Formatter</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-group">
+                <div class="logo-icon">🎙️</div>
+                <div>
+                    <h1>Professional Audio Transcriber</h1>
+                    <p class="subtitle">GoTranscript Rules • Zero-Mistake Mode • Smart Paragraphs • Word (.docx) Export</p>
+                </div>
+            </div>
+            <div class="header-badges">
+                <span class="badge badge-accent">📄 Word .DOCX Ready</span>
+                <button id="viewSlangsBtn" class="btn btn-secondary btn-sm">📖 Slang Glossary</button>
+            </div>
+        </header>
+
+        <!-- Main Grid Layout -->
+        <div class="main-grid">
+            <!-- Left Panel: Controls & Settings -->
+            <section class="panel control-panel">
+                <h2 class="panel-title">1. Audio File & Rules</h2>
+                
+                <!-- Upload Dropzone -->
+                <div class="dropzone" id="dropzone">
+                    <input type="file" id="audioFileInput" accept="audio/*,.mp3,.wav,.m4a,.ogg,.flac,.aac" hidden>
+                    <div class="dropzone-content" id="dropzoneContent">
+                        <div class="upload-icon">⚡</div>
+                        <p class="dropzone-text"><strong>Drag & Drop audio file here</strong></p>
+                        <p class="dropzone-subtext">or click to browse from your computer</p>
+                        <span class="format-pill">MP3, WAV, M4A, OGG, FLAC</span>
+                    </div>
+                    <div class="file-info-preview" id="fileInfoPreview" style="display: none;">
+                        <div class="file-icon">🎵</div>
+                        <div class="file-details">
+                            <span class="file-name" id="fileNameDisplay">audio.mp3</span>
+                            <span class="file-size" id="fileSizeDisplay">0 MB</span>
+                        </div>
+                        <button type="button" class="btn-clear" id="clearFileBtn" title="Remove file">✕</button>
+                    </div>
+                </div>
+
+                <!-- Audio Preview Player -->
+                <div class="audio-player-wrapper" id="audioPlayerSection" style="display: none;">
+                    <label class="form-label">Audio Preview</label>
+                    <audio id="audioPreview" controls></audio>
+                </div>
+
+                <!-- Settings Form -->
+                <div class="settings-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="timestampRule">⏱️ Timestamping Rule</label>
+                        <select id="timestampRule" class="form-select">
+                            <option value="none" selected>No Timestamps (Clean Text for Tests)</option>
+                            <option value="every_2_min">Every 2 Minutes [00:02:00] (GoTranscript Standard)</option>
+                            <option value="speaker_change">Every Speaker Change [00:00:00]</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="speakerMode">👥 Speaker Count Detection</label>
+                        <select id="speakerMode" class="form-select">
+                            <option value="gotranscript_test" selected>GoTranscript Test Mode (Clean Single Monologue)</option>
+                            <option value="auto">Auto Detect (Monologue vs Multi-Speaker)</option>
+                            <option value="multiple">Multiple Speakers (Conversations/Interviews)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label class="form-label" for="speaker1Name">Speaker 1 Name</label>
+                            <input type="text" id="speaker1Name" class="form-input" placeholder="Leave empty for Test mode">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="speaker2Name">Speaker 2 Name</label>
+                            <input type="text" id="speaker2Name" class="form-input" placeholder="Leave empty for Test mode">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="languageMode">Language Detection</label>
+                        <select id="languageMode" class="form-select">
+                            <option value="auto" selected>🌐 Auto Detect (English, Hindi, Hinglish)</option>
+                            <option value="english">🇬🇧 English</option>
+                            <option value="hindi">🇮🇳 Hindi (Pure Devanagari)</option>
+                            <option value="hinglish">🇮🇳 Hinglish (Roman Script)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="modelSize">Whisper Model Accuracy</label>
+                        <select id="modelSize" class="form-select">
+                            <option value="small" selected>Small (High Accuracy - Fast)</option>
+                            <option value="base">Base (Standard)</option>
+                            <option value="medium">Medium (Pro Grade - Deep Acoustic)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <button id="transcribeBtn" class="btn btn-primary btn-block" disabled>
+                    <span class="btn-text">🚀 Generate Formatted Transcript</span>
+                    <span class="spinner" style="display: none;"></span>
+                </button>
+            </section>
+
+            <!-- Right Panel: Results & Export -->
+            <section class="panel result-panel">
+                <div class="result-header">
+                    <h2 class="panel-title">2. Zero-Mistake Output</h2>
+                    <div class="export-actions" id="exportActions" style="display: none;">
+                        <button id="copyFinalBtn" class="btn btn-copy-final" title="Copy 100% clean transcript for direct submission">📋 Copy Clean Transcript</button>
+                        <button id="exportDocxBtn" class="btn btn-export-docx" title="Export as Microsoft Word (.docx)">📝 Download Word (.docx)</button>
+                        <button id="exportTxtBtn" class="btn btn-secondary btn-sm">📄 TXT</button>
+                        <button id="exportSrtBtn" class="btn btn-secondary btn-sm">🎬 SRT</button>
+                    </div>
+                </div>
+
+                <!-- Metrics Bar -->
+                <div class="metrics-bar" id="metricsBar" style="display: none;">
+                    <div class="metric-card">
+                        <span class="metric-label">Processing Time</span>
+                        <span class="metric-value" id="metricTime">0.0s</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Detected Language</span>
+                        <span class="metric-value" id="metricLang">Auto</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Paragraphs</span>
+                        <span class="metric-value highlight" id="metricTurns">0</span>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-icon">🎧</div>
+                    <h3>No Audio Processed Yet</h3>
+                    <p>Select your audio file and click Generate to produce zero-mistake clean transcript.</p>
+                </div>
+
+                <!-- Loading State -->
+                <div class="loading-state" id="loadingState" style="display: none;">
+                    <div class="pulse-loader"></div>
+                    <h3>Transcribing & Applying Rules...</h3>
+                    <p>Analyzing audio & generating 100% clean transcript...</p>
+                </div>
+
+                <!-- Transcript Tabs & Content -->
+                <div class="transcript-display-area" id="transcriptDisplayArea" style="display: none;">
+                    <div class="tab-header">
+                        <button class="tab-btn active" data-tab="formatted-view">📄 Clean Formatted View</button>
+                        <button class="tab-btn" data-tab="clean-text">Raw Text</button>
+                        <button class="tab-btn" data-tab="timeline">Full Segments</button>
+                    </div>
+
+                    <div class="tab-content active" id="tabFormattedView">
+                        <div class="transcript-box document-view" id="formattedTranscriptBox"></div>
+                    </div>
+
+                    <div class="tab-content" id="tabCleanText">
+                        <div class="transcript-box" id="cleanTranscriptText"></div>
+                    </div>
+
+                    <div class="tab-content" id="tabTimeline">
+                        <div class="timeline-list" id="timelineList"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Slang Dictionary Modal -->
+        <div class="modal" id="slangModal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>📖 Slang & Vocabulary Knowledge Base</h3>
+                    <button class="modal-close" id="closeSlangModal">✕</button>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-desc">Supported colloquial words and expressions:</p>
+                    <div class="slang-grid" id="slangGlossaryGrid"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
