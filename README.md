@@ -14,6 +14,7 @@
 [Features](#-key-features) • [Visual Previews](#-visual-previews--how-it-works) • [Quick Start](#-quick-start) • [GoTranscript Rules](#-gotranscript-zero-mistake-engine) • [API & CLI](#-cli-usage)
 
 </div>
+<img width="1142" height="845" alt="image" src="https://github.com/user-attachments/assets/c659b1e9-ed40-4ff1-95e0-7a2e5d1cddf9" />
 
 ---
 
