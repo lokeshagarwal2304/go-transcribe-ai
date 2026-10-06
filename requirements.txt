@@ -4,3 +4,14 @@ torchaudio
 fastapi>=0.100.0
 uvicorn>=0.20.0
 python-multipart>=0.0.6
+
+# Data collection and Marwadi fine-tuning stack
+pandas>=2.0.0
+yt-dlp>=2024.8.6
+librosa>=0.10.0
+pydub>=0.25.1
+datasets>=2.20.0
+transformers>=4.44.0
+accelerate>=0.33.0
+evaluate>=0.4.2
+jiwer>=3.0.0
